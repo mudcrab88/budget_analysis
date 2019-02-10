@@ -1,4 +1,5 @@
 import cx_Oracle
+import csv
 from xml.dom import minidom
 
 conn=cx_Oracle.connect('BUDGET2018/prostoy2@BDGT')
@@ -10,6 +11,7 @@ print("begin xml creation...")
 doc = minidom.Document()
 root = doc.createElement('root')
 doc.appendChild(root)
+csv_arr = [[]]
 for (ls,budget,kvsr,kfsr,kcsr,kvr,kesr,subkesr,meanstype,summa) in cursor.fetchall():
     row = doc.createElement('row')
     #лицевой счет
@@ -63,10 +65,18 @@ for (ls,budget,kvsr,kfsr,kcsr,kvr,kesr,subkesr,meanstype,summa) in cursor.fetcha
     summa_xml.appendChild(summa_text)
     row.appendChild(summa_xml)
     root.appendChild(row)
+    #формирование csv-файла
+    csv_row = [ls,budget,kvsr,kfsr,kcsr,kvr,kesr,subkesr,meanstype,summa]
+    csv_arr.append(csv_row)
 
+#форматирование xml
 xml_str = doc.toprettyxml(indent="  ")
-with open("budgetdata.xml", "w") as file:
-    file.write(xml_str)
-#закрываем соединение
+#запись в xml-файл 
+with open("budgetdata.xml", "w") as xml_file:
+    xml_file.write(xml_str)
+with open("budgetdata.csv", "w", newline="") as csv_file:
+    writer = csv.writer(csv_file, delimiter=";")
+    writer.writerows(csv_arr)
+#закрытие соединение
 conn.close()
 
