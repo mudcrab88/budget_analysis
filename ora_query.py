@@ -74,6 +74,7 @@ xml_str = doc.toprettyxml(indent="  ")
 #запись в xml-файл 
 with open("budgetdata.xml", "w") as xml_file:
     xml_file.write(xml_str)
+print("begin csv creation...")
 with open("budgetdata.csv", "w", newline="") as csv_file:
     writer = csv.writer(csv_file, delimiter=";")
     columns = ["facialacc_cls","budget","kvsr","kfsr","kcsr","kvr","kesr","subkesr","meanstype","summa"]
